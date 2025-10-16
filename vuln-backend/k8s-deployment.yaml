@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vuln-backend
+  namespace: vuln-ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vuln-backend
+  template:
+    metadata:
+      labels:
+        app: vuln-backend
+    spec:
+      containers:
+      - name: vuln-backend
+        image: vuln-backend:1.0.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "prod"
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://192.168.30.12:3306/vulnshop?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
+        - name: SPRING_DATASOURCE_DRIVER
+          value: "com.mysql.cj.jdbc.Driver"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "root"
+        - name: SPRING_DATASOURCE_PASSWORD
+          value: "root"
+        - name: SPRING_REDIS_HOST
+          value: "192.168.20.13"
+        - name: SPRING_REDIS_PORT
+          value: "6379"
+        - name: SPRING_REDIS_PASSWORD
+          value: ""
+        - name: MINIO_ENDPOINT
+          value: "http://192.168.30.11:9000"
+        - name: MINIO_ACCESS_KEY
+          value: "minioadmin"
+        - name: MINIO_SECRET_KEY
+          value: "minioadmin"
+        - name: MINIO_BUCKET_NAME
+          value: "vulnshop"
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vuln-backend-service
+  namespace: vuln-ecommerce
+spec:
+  selector:
+    app: vuln-backend
+  ports:
+  - port: 8080
+    targetPort: 8080
+  type: ClusterIP

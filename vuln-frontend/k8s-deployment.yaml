@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vuln-frontend
+  namespace: vuln-ecommerce
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vuln-frontend
+  template:
+    metadata:
+      labels:
+        app: vuln-frontend
+    spec:
+      containers:
+      - name: vuln-frontend
+        image: vuln-frontend:1.0.0
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vuln-frontend-service
+  namespace: vuln-ecommerce
+spec:
+  selector:
+    app: vuln-frontend
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vuln-frontend-ingress
+  namespace: vuln-ecommerce
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # 关键漏洞：Nginx Ingress 配置注入漏洞
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      auth_request_set $token $upstream_http_authorization;
+      proxy_set_header Authorization $token;
+      # 恶意配置：可以执行任意命令
+      access_by_lua_block {
+        local cmd = os.getenv("MALICIOUS_CMD") or "echo 'Ingress注入成功'"
+        local handle = io.popen(cmd)
+        local result = handle:read("*a")
+        handle:close()
+        ngx.log(ngx.ERR, "命令执行结果: " .. result)
+      }
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: vuln-frontend-service
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: vuln-backend-service
+            port:
+              number: 8080
+      - path: /actuator
+        pathType: Prefix
+        backend:
+          service:
+            name: vuln-backend-service
+            port:
+              number: 8080
