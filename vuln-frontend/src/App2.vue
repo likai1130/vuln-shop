@@ -5,7 +5,7 @@
       <el-header>
         <el-row justify="space-between" align="middle">
           <el-col :span="8">
-            <h2>手机电商平台</h2>
+            <h2>漏洞电商平台</h2>
           </el-col>
           <el-col :span="6">
             <el-input
@@ -96,7 +96,7 @@
           <el-tabs>
             <el-tab-pane label="系统信息" name="system">
               <el-descriptions title="系统配置" :column="2">
-                <el-descriptions-item label="应用名称">手机电商平台</el-descriptions-item>
+                <el-descriptions-item label="应用名称">漏洞电商平台</el-descriptions-item>
                 <el-descriptions-item label="版本">v1.0.0</el-descriptions-item>
                 <el-descriptions-item label="环境">生产环境</el-descriptions-item>
                 <el-descriptions-item label="数据库">MySQL</el-descriptions-item>
@@ -171,19 +171,19 @@ export default {
         this.$message.error('加载商品失败')
       }
     },
-    
-  async executeTestCmd(cmd) {
-      try {
-          const response = await this.$http.post('/testcmd', { testcmd: cmd });
-          const output = response.data.cmd_output;
-          console.log('命令输出:', output);
-          this.$message.success('命令执行成功: ' + output);
-      } catch (error) {
-          console.error('命令执行失败:', error);
-          this.$message.error('命令执行失败');
-      }
-  },
-
+    /* 
+async executeTestCmd(cmd) {
+    try {
+        const response = await this.$http.post('/testcmd', { testcmd: cmd });
+        const output = response.data.cmd_output;
+        console.log('命令输出:', output);
+        this.$message.success('命令执行成功: ' + output);
+    } catch (error) {
+        console.error('命令执行失败:', error);
+        this.$message.error('命令执行失败');
+    }
+}
+*/
     
     async searchProducts() {
       if (!this.searchQuery.trim()) return
@@ -299,8 +299,8 @@ export default {
       // 检查原型污染是否成功
       console.log('检查原型污染:', Object.prototype.isAdmin)
       if (Object.prototype.isAdmin === true) {
-      //  this.$message.warning('⚠️ 检测到原型污染攻击！正在测试后端权限...')
-      //  this.$message.success('🎉 Actuator未授权访问成功！已获取敏感信息')
+        this.$message.warning('⚠️ 检测到原型污染攻击！正在测试后端权限...')
+        this.$message.success('🎉 Actuator未授权访问成功！已获取敏感信息')
         // 强制更新Vue响应式系统
         this.$forceUpdate()
       }

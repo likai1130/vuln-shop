@@ -3,14 +3,14 @@ version: '3.8'
 services:
   # 后端服务
   vuln-backend:
-    image: vuln-backend:1.0.3
+    image: vuln-backend:1.0.7
     ports:
       - "8080:8080"
     environment:
       SPRING_PROFILES_ACTIVE: prod
-      SPRING_DATASOURCE_URL: "jdbc:mysql://10.10.11.222:33060/vulnshop?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
+      SPRING_DATASOURCE_URL: "jdbc:mysql://192.168.31.107:3306/vulnshop?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true"
       SPRING_DATASOURCE_USERNAME: "root"
-      SPRING_DATASOURCE_PASSWORD: "BMH@2025!"
+      SPRING_DATASOURCE_PASSWORD: "root1234"
       # 环境变量泄露测试
       SPRING_REDIS_HOST: 192.168.20.13
       SPRING_REDIS_PORT: 6379
@@ -22,7 +22,7 @@ services:
 
   # 前端服务
   vuln-frontend:
-    image: vuln-frontend:1.0.8
+    image: vuln-frontend:1.0.11
     container_name: vuln-frontend
     ports:
       - "3000:80"
